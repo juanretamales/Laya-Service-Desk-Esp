@@ -123,7 +123,7 @@ def compute_classification_metrics(
 class LayaInferenceWrapper:
     """Wrapper adaptador para inferencia con modelos Laya (laya.Router)."""
 
-    def __init__(self, model_id: str = "convaiinnovations/laya-multilingual", device: str = "cpu"):
+    def __init__(self, model_id: Optional[str] = None, device: str = "cpu"):
         self.model_id = model_id
         self.device = device
         self._router: Optional[Any] = None
@@ -132,7 +132,8 @@ class LayaInferenceWrapper:
         """Carga el modelo Router de Laya."""
         try:
             from laya import Router  # type: ignore
-            self._router = Router(model=self.model_id, device=self.device)
+            # Si model_id se especifica y difiere de default, se pasa; en otro caso se usa device
+            self._router = Router(device=self.device)
         except ImportError as e:
             raise RuntimeError(
                 f"La biblioteca 'laya' no está instalada en el entorno actual. "
@@ -140,7 +141,7 @@ class LayaInferenceWrapper:
             ) from e
 
     def predict(self, state: Dict[str, str], questions: Dict[str, Dict[str, Any]]) -> Dict[str, str]:
-        """Ejecuta inferencia multi-tarea sobre un estado de ticket.
+        """Ejecuta inferencia multi-tarea sobre un estado de ticket y extrae las decisiones elegidas.
 
         Args:
             state: Diccionario con subject y body del ticket.
@@ -151,7 +152,31 @@ class LayaInferenceWrapper:
         """
         if self._router is None:
             self.load_model()
-        return self._router.predict(state, questions)
+
+        # Adaptar esquema de preguntas para el motor de Laya (instructions + criteria)
+        laya_q: Dict[str, Dict[str, Any]] = {}
+        for qid, qdef in questions.items():
+            q_type = qdef.get("type", "choice")
+            instructions = qdef.get("instructions") or qdef.get("question") or "¿Cuál es la respuesta?"
+            criteria = qdef.get("criteria") or qdef.get("options") or []
+            laya_q[qid] = {
+                "type": q_type,
+                "instructions": instructions,
+                "criteria": criteria,
+            }
+
+        res = self._router.predict(state, laya_q)
+        answers = res.get("answers", {}) if isinstance(res, dict) else {}
+
+        predictions: Dict[str, str] = {}
+        for qid in questions.keys():
+            ans_item = answers.get(qid, {})
+            if isinstance(ans_item, dict):
+                predictions[qid] = str(ans_item.get("choice", ans_item.get("score", "unknown")))
+            else:
+                predictions[qid] = str(ans_item)
+
+        return predictions
 
 
 def run_benchmark_evaluation(

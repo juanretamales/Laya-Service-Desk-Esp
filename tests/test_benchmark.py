@@ -50,11 +50,36 @@ def test_compute_metrics_invalid_inputs():
         compute_classification_metrics([], [])
 
 
-def test_laya_wrapper_missing_package():
+def test_laya_wrapper_missing_package(monkeypatch):
     """Valida que el wrapper lance RuntimeError explicativo si laya no está disponible."""
+    import builtins
+    real_import = builtins.__import__
+
+    def mock_import(name, *args, **kwargs):
+        if name == "laya":
+            raise ImportError("Mock missing laya")
+        return real_import(name, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "__import__", mock_import)
     wrapper = LayaInferenceWrapper()
     with pytest.raises(RuntimeError, match="La biblioteca 'laya' no está instalada"):
         wrapper.load_model()
+
+
+def test_laya_wrapper_predict_real():
+    """Valida la llamada predict del wrapper de Laya en CPU."""
+    wrapper = LayaInferenceWrapper(device="cpu")
+    state = {"subject": "Problema de red", "body": "No tengo conexion wifi"}
+    questions = {
+        "category": {
+            "type": "choice",
+            "question": "Categoria",
+            "options": ["network", "hardware"],
+        }
+    }
+    preds = wrapper.predict(state, questions)
+    assert "category" in preds
+    assert preds["category"] in ["network", "hardware"]
 
 
 def test_run_benchmark_evaluation_with_mock(tmp_path: Path):

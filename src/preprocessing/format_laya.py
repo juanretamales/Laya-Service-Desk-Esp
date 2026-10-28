@@ -24,18 +24,24 @@ def build_default_laya_questions() -> Dict[str, Dict[str, Any]]:
     """
     return {
         "category": {
-            "question": "¿Cuál es la categoría canónica correspondiente a este incidente o requerimiento?",
             "type": "choice",
+            "instructions": "¿Cuál es la categoría canónica correspondiente a este incidente o requerimiento?",
+            "criteria": list(CANONICAL_CATEGORIES),
+            "question": "¿Cuál es la categoría canónica correspondiente a este incidente o requerimiento?",
             "options": list(CANONICAL_CATEGORIES),
         },
         "priority": {
-            "question": "¿Cuál es el nivel de prioridad operativa para este ticket de soporte?",
             "type": "choice",
+            "instructions": "¿Cuál es el nivel de prioridad operativa para este ticket de soporte?",
+            "criteria": list(CANONICAL_PRIORITIES),
+            "question": "¿Cuál es el nivel de prioridad operativa para este ticket de soporte?",
             "options": list(CANONICAL_PRIORITIES),
         },
         "support_group": {
-            "question": "¿Qué grupo de soporte especializado debe gestionar y resolver este ticket?",
             "type": "choice",
+            "instructions": "¿Qué grupo de soporte especializado debe gestionar y resolver este ticket?",
+            "criteria": list(CANONICAL_SUPPORT_GROUPS),
+            "question": "¿Qué grupo de soporte especializado debe gestionar y resolver este ticket?",
             "options": list(CANONICAL_SUPPORT_GROUPS),
         },
     }

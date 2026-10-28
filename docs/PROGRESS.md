@@ -24,11 +24,11 @@ Sincronizado con el roadmap granular en [`docs/09_ROADMAP_IA.md`](09_ROADMAP_IA.
   - [x] 2.5 Formato dual (`data/processed/unified_tickets.jsonl` + `data/processed/laya_formatted_tickets.jsonl`).
   - [x] 2.6 Split estratificado inmutable (Train 70% [1.021], Val 15% [219], Test 15% [217] congelado con SHA-256 `b80cf24430cdfb12a9ace43cccc96cb8c4a5dcd19e8f5dc4ada1bf2cfeb969c4` y 0% de fuga verificado).
   - [x] 2.7 Tests unitarios de normalización y splits (52/52 tests pasando en `tests/`, 0 errores flake8).
-- [ ] **Fase 3: Baseline Zero-Shot Laya Multilingual Original (Gate G3)**
-  - [x] 3.1 Harness de evaluación en `src/evaluation/benchmark.py` (métricas F1/Accuracy, latencia, matriz de confusión, CLI y 5 tests unitarios).
-  - [ ] 3.2 Inferencia zero-shot sobre test congelado.
-  - [ ] 3.3 Medición de métricas (F1-macro, accuracy, matriz de confusión, latencia, VRAM).
-  - [ ] 3.4 Reporte persistido en `reports/baseline_results.json`.
+- [x] **Fase 3: Baseline Zero-Shot Laya Multilingual Original (Gate G3 Aprobado)**
+  - [x] 3.1 Harness de evaluación en `src/evaluation/benchmark.py` (métricas F1/Accuracy, latencia, matriz de confusión, CLI y tests unitarios).
+  - [x] 3.2 Inferencia zero-shot sobre test congelado (217 tickets evaluados con `convaiinnovations/laya-multilingual` en CPU local).
+  - [x] 3.3 Medición de métricas (Category Accuracy: 18.89%, Macro-F1: 18.57%; Priority Macro-F1: 71.22%; Support Group Macro-F1: 23.58%; latencia CPU media 2.47s/ticket).
+  - [x] 3.4 Reporte persistido en `reports/baseline_results.json` con hash de test verificado (`b80cf24430cdfb12a9ace43cccc96cb8c4a5dcd19e8f5dc4ada1bf2cfeb969c4`).
 - [ ] **Fase 4: Fine-Tuning Laya Multilingual en Colab Pro (Gate G4)**
   - [ ] 4.1 Configuración de hiperparámetros en `configs/training.yaml`.
   - [ ] 4.2 Módulo de entrenamiento `src/training/train.py` (RLCD / typed decisions).
