@@ -129,17 +129,22 @@ flowchart TD
 ### Fase 4: Fine-Tuning de Laya en Colab Pro (Gate G4)
 *Objetivo:* Ajustar el modelo Laya Multilingual sobre los tickets corporativos en español respetando el protocolo de entrenamiento RLCD.
 
-- [ ] **4.1 Configuración de Hiperparámetros (`configs/training.yaml`) `[Reversible]`:**
-  - Fijar semilla aleatoria (`seed: 42`).
-  - Definir batch size, learning rate, warmup steps, weight decay y épocas.
-  - Regla: Entrenar únicamente con `train.jsonl` y afinar hiperparámetros solo con `val.jsonl`.
-- [ ] **4.2 Módulo de Entrenamiento (`src/training/train.py`) `[Reversible]`:**
-  - Implementar pipeline de entrenamiento basado en RLCD / typed decisions tuning compatible con Laya.
-  - Calibración de temperatura por tarea (`temperature_scaling`).
-- [ ] **4.3 Notebook Orquestador de Colab (`notebooks/laya_finetune_service_desk.ipynb`) `[Reversible]`:**
-  - Carga de código desde revisión Git/commit fijado.
-  - Validación de hashes SHA-256 de `train.jsonl` y `val.jsonl`.
-  - Instrumentación para registro de recursos: modelo de GPU asignada, VRAM pico, GPU-horas y tiempo total.
+- [x] **4.1 Configuración de Hiperparámetros (`configs/training.yaml`) `[Reversible]`:**
+  - Fijar semilla aleatoria (`seed: 42`), batch size=16, lr_encoder=2e-5, lr_head=1e-4, warmup=0.10, weight_decay=0.01.
+  - Regla estricta: Entrenar únicamente con `train.jsonl` (1.021 tickets) y validar con `val.jsonl` (219 tickets). Aislamiento total frente a `test.jsonl`.
+- [x] **4.2 Módulo de Entrenamiento (`src/training/train.py`) `[Reversible]`:**
+  - Implementado pipeline de ajuste supervisado para decisiones tipadas (`choice`) de Laya con Cross-Entropy multicapa.
+  - Validación continua en cada época calculando métricas exhaustivas por tarea (Train/Val Loss, Acc, Macro-F1, Micro-F1).
+  - Guardado dual de checkpoints: mejor modelo (`best_model.safetensors` / `model.safetensors`) y último modelo (`last_model.safetensors`).
+  - Criterio de Early Stopping con paciencia configurable (`early_stopping_patience: 3` en `configs/training.yaml` o CLI `--patience`).
+  - Exportación automática de curvas de entrenamiento en `training_curves.csv` y `training_curves.json`.
+- [x] **4.3 Curvas de Aprendizaje Científicas y Notebook Orquestador (`src/evaluation/plotting.py` y `notebooks/laya_finetune_service_desk.ipynb`) `[Reversible]`:**
+  - Implementado módulo `src/evaluation/plotting.py` para exportar figuras de calidad de publicación a 300 DPI (`reports/figures/` y réplica en `checkpoints/laya_service_desk/figures/`):
+    - Curva de Pérdida (`training_loss_curve.png`): Train vs. Validation Loss con marcador vertical de mejor época por Early Stopping.
+    - Curvas de Métricas Multitarea (`training_metrics_curve.png`): Macro-F1 por tarea y promedio general.
+    - Dashboard Integral (`training_dashboard.png`): Panel doble unificado para publicación científica o reporte técnico.
+  - Actualizado notebook orquestador para visualización tabular y despliegue inline de las figuras en Colab.
+  - Verificado con 8 tests unitarios dedicados en `tests/test_plotting.py` (73/73 tests pasando en suite completa, 0 errores flake8).
 - [ ] **4.4 Ejecución del Entrenamiento en Colab Pro `[Requiere Autorización]`:**
   - Ejecutar entrenamiento tras autorización del usuario.
   - Monitorear pérdida de entrenamiento y convergencia en validation.

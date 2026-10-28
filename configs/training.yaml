@@ -1,6 +1,49 @@
-model: laya-multilingual
-model_id: null
-revision: null
-seed: 42
-train_enabled: false
-# Ajustar solo despues de validar API y recursos Colab
+# Configuración de Entrenamiento y Fine-Tuning para Laya Multilingual
+# Protocolo estricto: Entrenar únicamente con train.jsonl; evaluar hiperparámetros solo con val.jsonl.
+# Queda prohibido utilizar data/splits/test.jsonl durante el entrenamiento o ajuste.
+
+model:
+  family: laya
+  variant: multilingual
+  model_id: convaiinnovations/laya-multilingual
+  base_checkpoint: convaiinnovations/laya
+  revision: main
+  context_max_len: 1024
+  head_max_len: 192
+
+data:
+  train_file: data/splits/train.jsonl
+  val_file: data/splits/val.jsonl
+  train_records_expected: 1021
+  val_records_expected: 219
+  tasks:
+    - category
+    - priority
+    - support_group
+
+training:
+  seed: 42
+  epochs: 5
+  batch_size: 16
+  gradient_accumulation_steps: 1
+  learning_rate_encoder: 2.0e-5
+  learning_rate_head: 1.0e-4
+  weight_decay: 0.01
+  warmup_ratio: 0.10
+  max_grad_norm: 1.0
+  optimizer: adamw
+  lr_scheduler: cosine
+  mixed_precision: fp16
+  early_stopping_patience: 3
+  eval_every_n_epochs: 1
+
+calibration:
+  temperature_scaling: true
+  min_confidence_gating: true
+  fit_on_validation: true
+
+output:
+  checkpoint_dir: checkpoints/laya_service_desk
+  figures_dir: reports/figures
+  export_safetensors: true
+  save_best_metric: val_macro_f1

@@ -1,2 +1,9 @@
-# PENDIENTE: fijar versiones una vez verificada la API oficial de Laya.
-# No instalar dependencias de Llama por defecto.
+# Dependencias oficiales para ejecución en Google Colab Pro GPU
+laya>=0.4.17
+torch>=2.0.0
+transformers>=4.48.0
+safetensors>=0.4.0
+PyYAML>=6.0
+tqdm>=4.60
+huggingface_hub>=0.20.0
+matplotlib>=3.8.0
