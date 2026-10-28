@@ -19,7 +19,7 @@ Sincronizado con el roadmap granular en [`docs/09_ROADMAP_IA.md`](09_ROADMAP_IA.
 - [ ] **Fase 2: Normalización, Anonimización PII, Deduplicación y Splits (Gate G2)**
   - [x] 2.1 Anonimización PII (`src/preprocessing/anonymize.py` + tests unitarios).
   - [x] 2.2 Filtro y validación de español (`src/preprocessing/language.py` + tests unitarios).
-  - [ ] 2.3 Mapeo canónico de etiquetas en `src/preprocessing/unify.py`.
+  - [x] 2.3 Mapeo canónico de etiquetas en `src/preprocessing/unify.py` (8/8 tests).
   - [ ] 2.4 Deduplicación de tickets.
   - [ ] 2.5 Formato dual (JSONL tabular + Laya typed questions).
   - [ ] 2.6 Split estratificado inmutable (Train 70%, Val 15%, Test 15% congelado con hash).

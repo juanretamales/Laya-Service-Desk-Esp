@@ -78,13 +78,11 @@ flowchart TD
   - Filtrado estricto para asegurar tickets en idioma español frente a inglés, portugués y alemán.
   - Clasificación determinista con marcadores léxicos, stopwords y ortografía distintiva.
   - Verificación mediante suite de 7 tests unitarios en `tests/test_language.py`.
-- [ ] **2.3 Mapeo Canónico de Etiquetas y Vocabulario (`src/preprocessing/unify.py`) `[Reversible]`:**
+- [x] **2.3 Mapeo Canónico de Etiquetas y Vocabulario (`src/preprocessing/unify.py`) `[Reversible]`:**
   - Contrato de columnas: `ticket_id`, `subject`, `description`, `category`, `priority`, `support_group`.
-  - Mapeo semántico a clases canónicas de [`docs/04_NORMALIZACION.md`](docs/04_NORMALIZACION.md):
-    - *Categorías:* `access`, `network`, `hardware`, `software`, `email`, `database`, `other`, `unknown`.
-    - *Prioridades:* `low`, `medium`, `high`, `critical`, `unknown`.
-    - *Grupos:* `service_desk`, `identity`, `network`, `workplace`, `applications`, `dba`, `other`, `unknown`.
-  - No inferir ni inventar etiquetas faltantes: marcar como `unknown`.
+  - Mapeo semántico a clases canónicas de [`docs/04_NORMALIZACION.md`](docs/04_NORMALIZACION.md) (`access`, `network`, `hardware`, `software`, `email`, `database`, `other`, `unknown`).
+  - No inferir ni inventar etiquetas faltantes: asignación estricta de `unknown`.
+  - Verificación mediante suite de 8 tests unitarios en `tests/test_unify.py`.
 - [ ] **2.4 Deduplicación Exacta y Semántica `[Reversible]`:**
   - Deduplicación por hash SHA-256 de texto normalizado (`subject + description`).
   - Reporte de tasas de duplicados descartados por fuente.
