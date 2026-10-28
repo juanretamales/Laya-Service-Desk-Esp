@@ -11,11 +11,11 @@ Sincronizado con el roadmap granular en [`docs/09_ROADMAP_IA.md`](09_ROADMAP_IA.
     - `mendeley_helpdesk`: Condicional/Secundario (CC BY 4.0, textos limitados en inglés).
     - `mdpi_it_incidents`: Excluido formalmente (artículo sin dataset descargable).
   - [x] 0.4 Matriz de riesgos documentada en `docs/03_DATASETS_Y_LICENCIAS.md` (R1-R5).
-- [ ] **Fase 1: Ingestión, Descarga Segura y Manifiestos de Datos (Gate G1)**
-  - [ ] 1.1 Módulo `src/ingestion/download.py` (HTTP / Zenodo API + SHA-256).
-  - [ ] 1.2 Manifiesto inmutable `data/raw/manifest.json`.
-  - [ ] 1.3 Fixtures sintéticos en `tests/fixtures/`.
-  - [ ] 1.4 Tests unitarios de descarga en `tests/test_download.py`.
+- [x] **Fase 1: Ingestión, Descarga Segura y Manifiestos de Datos (Gate G1)**
+  - [x] 1.1 Módulo `src/ingestion/download.py` (HTTP / Zenodo API + SHA-256 + atómico).
+  - [x] 1.2 Manifiesto inmutable `data/raw/manifest.json`.
+  - [x] 1.3 Fixtures sintéticos en `tests/fixtures/synthetic_tickets.csv`.
+  - [x] 1.4 Tests unitarios de descarga en `tests/test_download.py` (100% pasando).
 - [ ] **Fase 2: Normalización, Anonimización PII, Deduplicación y Splits (Gate G2)**
   - [ ] 2.1 Anonimización PII (`src/preprocessing/anonymize.py`).
   - [ ] 2.2 Filtro y validación de español (`src/preprocessing/language.py`).

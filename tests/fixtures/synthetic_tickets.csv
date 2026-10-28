@@ -1,0 +1,6 @@
+ticket_id,subject,description,category,priority,support_group
+TCK-001,Problema con la VPN,No puedo conectarme a la red remota corporativa desde mi casa,network,high,network
+TCK-002,Restablecer contrasena,Olvide mi clave de acceso al portal de recursos humanos,access,medium,identity
+TCK-003,Monitor no enciende,La pantalla secundaria parpadea y luego queda en negro,hardware,low,workplace
+TCK-004,Fallo al actualizar paquete,El software ERP reporta error 500 al iniciar sesion,software,critical,applications
+TCK-005,Error en base de datos,Timeout en consulta de clientes para generar reporte fiscal,database,high,dba
