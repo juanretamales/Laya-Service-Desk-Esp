@@ -106,9 +106,11 @@ flowchart TD
 ### Fase 3: Evaluación de Baseline Original Laya Multilingual (Gate G3)
 *Objetivo:* Evaluar el desempeño zero-shot de `laya-multilingual` sin fine-tuning para establecer el punto de partida científico.
 
-- [ ] **3.1 Implementar Harness de Evaluación (`src/evaluation/benchmark.py`) `[Reversible]`:**
-  - Cargar `laya.Router(model="multilingual")`.
+- [x] **3.1 Implementar Harness de Evaluación (`src/evaluation/benchmark.py`) `[Reversible]`:**
+  - Cargar `laya.Router(model="multilingual")` o predictor inyectable.
   - Configurar preguntas tipadas con las opciones canónicas del proyecto.
+  - Soporte CLI (`--test-file`, `--output-report`, `--model-id`, `--device`, `--dry-run`), tracking de latencia y matriz de confusión.
+  - Verificado con 5 tests unitarios en `tests/test_benchmark.py` (57/57 tests pasando, 0 errores flake8).
 - [ ] **3.2 Inferencia Zero-Shot sobre Test Congelado `[Reversible]`:**
   - Ejecutar predicción sobre `data/splits/test.jsonl` usando inferencia local o Colab CPU/GPU.
 - [ ] **3.3 Medición de Métricas Baseline `[Reversible]`:**

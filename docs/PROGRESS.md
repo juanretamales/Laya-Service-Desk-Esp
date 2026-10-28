@@ -25,7 +25,7 @@ Sincronizado con el roadmap granular en [`docs/09_ROADMAP_IA.md`](09_ROADMAP_IA.
   - [x] 2.6 Split estratificado inmutable (Train 70% [1.021], Val 15% [219], Test 15% [217] congelado con SHA-256 `b80cf24430cdfb12a9ace43cccc96cb8c4a5dcd19e8f5dc4ada1bf2cfeb969c4` y 0% de fuga verificado).
   - [x] 2.7 Tests unitarios de normalización y splits (52/52 tests pasando en `tests/`, 0 errores flake8).
 - [ ] **Fase 3: Baseline Zero-Shot Laya Multilingual Original (Gate G3)**
-  - [ ] 3.1 Harness de evaluación en `src/evaluation/benchmark.py`.
+  - [x] 3.1 Harness de evaluación en `src/evaluation/benchmark.py` (métricas F1/Accuracy, latencia, matriz de confusión, CLI y 5 tests unitarios).
   - [ ] 3.2 Inferencia zero-shot sobre test congelado.
   - [ ] 3.3 Medición de métricas (F1-macro, accuracy, matriz de confusión, latencia, VRAM).
   - [ ] 3.4 Reporte persistido en `reports/baseline_results.json`.
