@@ -80,7 +80,7 @@ mlruns/
 .ipynb_checkpoints/
 *-checkpoint.ipynb
 
-# --- Editores e IDEs ---
+# --- Editores, Asistentes e IDEs ---
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
@@ -90,6 +90,7 @@ mlruns/
 *.swp
 *.swo
 .gemini/
+.agents/
 
 # --- Sistema Operativo ---
 .DS_Store

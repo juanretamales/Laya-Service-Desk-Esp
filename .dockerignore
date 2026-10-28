@@ -13,3 +13,5 @@ reports/
 *.safetensors
 *.bin
 *.gguf
+.agents/
+.gemini/
