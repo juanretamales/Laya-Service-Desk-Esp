@@ -38,32 +38,32 @@ flowchart TD
 - [x] **0.2 Verificación de la API y Paradigma de Inferencia `[Solo Lectura]`:**
   - Auditar API `Router`: preguntas tipadas (`choice`, `score`, `noul`) en una sola pasada hacia adelante (*single forward pass*).
   - Verificar compatibilidad de clasificación multiclase para `category`, `priority` y `support_group`.
-- [ ] **0.3 Auditoría de Licencias de Datasets Candidatos `[Solo Lectura]`:**
+- [x] **0.3 Auditoría de Licencias de Datasets Candidatos `[Solo Lectura]`:**
   - Auditar fuentes de [`docs/03_DATASETS_Y_LICENCIAS.md`](docs/03_DATASETS_Y_LICENCIAS.md) (Kaggle Multilingual, Zenodo 7648117, Mendeley Helpdesk, MDPI).
   - Verificar permisos expresos de redistribución e investigación comercial/académica. Excluir fuentes sin licencia verificada.
-- [ ] **0.4 Matriz de Riesgos y Restricciones `[Reversible]`:**
+- [x] **0.4 Matriz de Riesgos y Restricciones `[Reversible]`:**
   - Documentar riesgos de sesgo lingüístico, PII, balance de clases y disponibilidad de GPU en Colab Pro.
 
-> **Exit Gate G0:** Checkpoints de Laya y licencias de datos auditadas y registradas con confirmación formal en `configs/model.yaml` y `docs/PROGRESS.md`.
+> **Exit Gate G0 (SUPERADO):** Checkpoints de Laya y licencias de datos auditadas y registradas con confirmación formal en `configs/model.yaml` y `docs/PROGRESS.md`.
 
 ---
 
 ### Fase 1: Ingestión, Descarga Segura y Manifiestos de Datos (Gate G1)
 *Objetivo:* Implementar herramientas reproducibles para descargar las fuentes aprobadas sin depender de contenedores ni intervenciones manuales desordenadas.
 
-- [ ] **1.1 Implementar Módulo de Descarga (`src/ingestion/download.py`) `[Reversible]`:**
+- [x] **1.1 Implementar Módulo de Descarga (`src/ingestion/download.py`) `[Reversible]`:**
   - Soporte para descarga HTTP y API REST pública (Zenodo record 7648117, etc.) mediante librería estándar (`urllib.request`).
   - Validación de integridad automática: cómputo y verificación de hashes SHA-256 de los archivos descargados.
   - Descompresión automática controlada (ZIP / TAR) hacia `data/raw/<source_id>/`.
-  - Salvaguarda: no sobreescribir archivos existentes sin confirmación expresa.
-- [ ] **1.2 Generador de Manifiesto Inmutable (`data/raw/manifest.json`) `[Reversible]`:**
+  - Salvaguarda e idempotencia: omite descargas si el archivo ya existe y es íntegro (vital para Colab).
+- [x] **1.2 Generador de Manifiesto Inmutable (`data/raw/manifest.json`) `[Reversible]`:**
   - Registrar para cada archivo descargado: `source_id`, URL de origen, timestamp UTC, tamaño en bytes y hash SHA-256.
-- [ ] **1.3 Fixtures Sintéticos para Pruebas Aisladas `[Reversible]`:**
-  - Crear datos sintéticos mínimos de prueba en `tests/fixtures/` para validar el pipeline sin requerir descargas pesadas de internet.
-- [ ] **1.4 Tests Unitarios de Ingestión (`tests/test_download.py`) `[Reversible]`:**
-  - Validar manejo de errores de conexión, corrupción de hash SHA-256 y parseo de respuestas.
+- [x] **1.3 Fixtures Sintéticos para Pruebas Aisladas `[Reversible]`:**
+  - Crear datos sintéticos mínimos de prueba en `tests/fixtures/synthetic_tickets.csv` para validar el pipeline sin requerir descargas pesadas de internet.
+- [x] **1.4 Tests Unitarios de Ingestión (`tests/test_download.py`) `[Reversible]`:**
+  - Validar manejo de errores de conexión, corrupción de hash SHA-256, parseo e idempotencia de descargas (12/12 tests pasando).
 
-> **Exit Gate G1:** Módulo de descarga probado con fixtures sintéticos, hash SHA-256 validado y manifiesto estructurado en `data/raw/manifest.json`.
+> **Exit Gate G1 (SUPERADO):** Módulo de descarga probado con fixtures sintéticos, hash SHA-256 validado, datos reales de Zenodo en `data/raw/zenodo_tickets/` y manifiesto estructurado en `data/raw/manifest.json`.
 
 ---
 
