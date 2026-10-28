@@ -70,9 +70,10 @@ flowchart TD
 ### Fase 2: Normalización, Anonimización PII, Deduplicación y Splits (Gate G2)
 *Objetivo:* Unificar datasets dispersos en un contrato canónico en español, eliminando datos sensibles y garantizando aislamiento sin fuga (*data leakage*).
 
-- [ ] **2.1 Anonimización y Sanitización de PII (`src/preprocessing/anonymize.py`) `[Reversible]`:**
+- [x] **2.1 Anonimización y Sanitización de PII (`src/preprocessing/anonymize.py`) `[Reversible]`:**
   - Detección y enmascaramiento con Regex de entidades sensibles: emails (`<EMAIL>`), teléfonos (`<PHONE>`), direcciones IP (`<IP>`), tarjetas/cuentas (`<CARD>`), y nombres propios en saludos/firmas.
-  - Verificación manual sobre muestra aleatoria de registros procesados.
+  - Normalización de placeholders heredados (`[NAME]`, `[COMPANY]` -> `<NAME>`, `<ORG>`).
+  - Verificación mediante suite de 11 tests unitarios en `tests/test_anonymize.py`.
 - [ ] **2.2 Validación y Filtrado de Idioma (`src/preprocessing/language.py`) `[Reversible]`:**
   - Filtrado estricto para asegurar tickets en idioma español.
   - Descarte o reporte de tickets en otros idiomas presentes en fuentes multilingües.

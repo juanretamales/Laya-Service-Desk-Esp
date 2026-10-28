@@ -17,7 +17,7 @@ Sincronizado con el roadmap granular en [`docs/09_ROADMAP_IA.md`](09_ROADMAP_IA.
   - [x] 1.3 Fixtures sintéticos en `tests/fixtures/synthetic_tickets.csv`.
   - [x] 1.4 Tests unitarios de descarga en `tests/test_download.py` (100% pasando).
 - [ ] **Fase 2: Normalización, Anonimización PII, Deduplicación y Splits (Gate G2)**
-  - [ ] 2.1 Anonimización PII (`src/preprocessing/anonymize.py`).
+  - [x] 2.1 Anonimización PII (`src/preprocessing/anonymize.py` + tests unitarios).
   - [ ] 2.2 Filtro y validación de español (`src/preprocessing/language.py`).
   - [ ] 2.3 Mapeo canónico de etiquetas en `src/preprocessing/unify.py`.
   - [ ] 2.4 Deduplicación de tickets.
