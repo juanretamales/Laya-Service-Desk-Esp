@@ -1,22 +1,51 @@
 schema_version: 1
 sources:
+  - id: zenodo_tickets
+    name: "Classification of IT Support Tickets"
+    enabled: false
+    path: data/raw/zenodo_tickets/
+    license: "CC-BY-4.0"
+    license_verified: true
+    url: "https://zenodo.org/api/records/7648117"
+    column_map:
+      ticket_id: ticket_id
+      subject: null
+      description: text
+      category: category
+      priority: null
+      support_group: null
+
   - id: kaggle_multilingual
+    name: "Customer IT Support - Ticket Dataset"
     enabled: false
     path: data/raw/kaggle_multilingual.csv
-    license_verified: false
-    column_map: {ticket_id: ticket_id, subject: subject, description: description, category: category, priority: priority, support_group: support_group}
-  - id: zenodo_tickets
-    enabled: false
-    path: data/raw/zenodo_tickets.csv
-    license_verified: false
-    column_map: {}
+    license: "CC-BY-NC-4.0"
+    license_verified: true
+    url: "https://www.kaggle.com/datasets/tobiasbueck/multilingual-customer-support-tickets"
+    column_map:
+      ticket_id: ticket_id
+      subject: Subject
+      description: Body
+      category: Type
+      priority: Priority
+      support_group: Queue
+      language: Language
+
   - id: mendeley_helpdesk
+    name: "Help Desk Tickets"
     enabled: false
-    path: data/raw/mendeley_helpdesk.csv
-    license_verified: false
+    path: data/raw/mendeley_helpdesk/
+    license: "CC-BY-4.0"
+    license_verified: true
+    url: "https://data.mendeley.com/datasets/btm76zndnt/3"
+    status: "secondary_conditional"
     column_map: {}
+
   - id: mdpi_it_incidents
+    name: "Classifying IT Incident Tickets (Oliveira et al.)"
     enabled: false
-    path: data/raw/mdpi_it_incidents.csv
+    path: null
     license_verified: false
+    status: "excluded_no_raw_dataset_available"
+    url: "https://www.mdpi.com/2673-2688/3/3/35"
     column_map: {}

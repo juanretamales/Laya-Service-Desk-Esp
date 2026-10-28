@@ -2,11 +2,15 @@
 
 Sincronizado con el roadmap granular en [`docs/09_ROADMAP_IA.md`](09_ROADMAP_IA.md):
 
-- [x] **Fase 0 (Parcial): Auditoría y Contratos**
-  - [x] 0.1 Repositorio y checkpoint de Laya verificados (`convaiinnovations/laya-multilingual`, Apache-2.0).
-  - [x] 0.2 API y paradigma de inferencia de Laya verificados (`Router`, decisiones tipadas).
-  - [ ] 0.3 Auditoría y confirmación de licencias de fuentes de datos candidatas.
-  - [ ] 0.4 Matriz de riesgos y restricciones de GPU/PII.
+- [x] **Fase 0: Auditoría y Contratos (Gate G0 Aprobado)**
+  - [x] 0.1 Repositorio y checkpoint de Laya verificados (`convaiinnovations/laya-multilingual`, Apache-2.0 en `configs/model.yaml`).
+  - [x] 0.2 API y paradigma de inferencia de Laya verificados (`Router`, decisiones tipadas `choice`/`score`/`noul`).
+  - [x] 0.3 Auditoría formal de licencias de datasets:
+    - `zenodo_tickets`: Aprobado (CC BY 4.0, tickets multi-idioma con español, PII saneada).
+    - `kaggle_multilingual`: Aprobado para investigación no comercial (CC-BY-NC 4.0, filtrable por `Language == 'es'`).
+    - `mendeley_helpdesk`: Condicional/Secundario (CC BY 4.0, textos limitados en inglés).
+    - `mdpi_it_incidents`: Excluido formalmente (artículo sin dataset descargable).
+  - [x] 0.4 Matriz de riesgos documentada en `docs/03_DATASETS_Y_LICENCIAS.md` (R1-R5).
 - [ ] **Fase 1: Ingestión, Descarga Segura y Manifiestos de Datos (Gate G1)**
   - [ ] 1.1 Módulo `src/ingestion/download.py` (HTTP / Zenodo API + SHA-256).
   - [ ] 1.2 Manifiesto inmutable `data/raw/manifest.json`.
