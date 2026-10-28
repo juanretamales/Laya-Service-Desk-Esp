@@ -74,9 +74,10 @@ flowchart TD
   - Detección y enmascaramiento con Regex de entidades sensibles: emails (`<EMAIL>`), teléfonos (`<PHONE>`), direcciones IP (`<IP>`), tarjetas/cuentas (`<CARD>`), y nombres propios en saludos/firmas.
   - Normalización de placeholders heredados (`[NAME]`, `[COMPANY]` -> `<NAME>`, `<ORG>`).
   - Verificación mediante suite de 11 tests unitarios en `tests/test_anonymize.py`.
-- [ ] **2.2 Validación y Filtrado de Idioma (`src/preprocessing/language.py`) `[Reversible]`:**
-  - Filtrado estricto para asegurar tickets en idioma español.
-  - Descarte o reporte de tickets en otros idiomas presentes en fuentes multilingües.
+- [x] **2.2 Validación y Filtrado de Idioma (`src/preprocessing/language.py`) `[Reversible]`:**
+  - Filtrado estricto para asegurar tickets en idioma español frente a inglés, portugués y alemán.
+  - Clasificación determinista con marcadores léxicos, stopwords y ortografía distintiva.
+  - Verificación mediante suite de 7 tests unitarios en `tests/test_language.py`.
 - [ ] **2.3 Mapeo Canónico de Etiquetas y Vocabulario (`src/preprocessing/unify.py`) `[Reversible]`:**
   - Contrato de columnas: `ticket_id`, `subject`, `description`, `category`, `priority`, `support_group`.
   - Mapeo semántico a clases canónicas de [`docs/04_NORMALIZACION.md`](docs/04_NORMALIZACION.md):
