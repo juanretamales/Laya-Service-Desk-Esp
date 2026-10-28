@@ -63,6 +63,7 @@ def download_file(
     target_path: Path | str,
     expected_sha256: Optional[str] = None,
     overwrite: bool = False,
+    check_existing: bool = True,
     timeout: int = 60,
 ) -> Path:
     """
@@ -72,22 +73,41 @@ def download_file(
         url: URL completa del recurso a descargar.
         target_path: Destino final del archivo en disco.
         expected_sha256: Hash SHA-256 esperado opcional para validación de integridad.
-        overwrite: Si es True, permite sobreescribir el archivo destino si ya existe.
+        overwrite: Si es True, fuerza la re-descarga y reemplazo del archivo destino.
+        check_existing: Si es True y el archivo ya existe y es íntegro, omite la descarga (idempotente).
         timeout: Tiempo máximo de espera en segundos para la conexión HTTP.
 
     Returns:
         Path al archivo final descargado y verificado.
 
     Raises:
-        FileExistsError: Si el archivo ya existe y overwrite es False.
+        FileExistsError: Si el archivo ya existe y overwrite=False con check_existing=False.
         ValueError: Si el hash calculado no coincide con expected_sha256.
         urllib.error.URLError: Si ocurre un fallo de red o error de respuesta HTTP.
     """
     target = Path(target_path)
     if target.exists() and not overwrite:
-        raise FileExistsError(
-            f"El archivo destino ya existe: {target}. Use overwrite=True para reemplazarlo."
-        )
+        if check_existing:
+            if expected_sha256:
+                existing_hash = calculate_sha256(target)
+                if existing_hash.lower() == expected_sha256.lower():
+                    logger.info("El archivo %s ya existe y coincide su SHA-256. Omitiendo descarga.", target.name)
+                    return target
+                logger.warning(
+                    "El archivo %s existe pero el hash difiere. Re-descargando...",
+                    target.name,
+                )
+            elif target.stat().st_size > 0:
+                logger.info(
+                    "El archivo %s ya existe (%d bytes). Omitiendo descarga.",
+                    target.name,
+                    target.stat().st_size,
+                )
+                return target
+        else:
+            raise FileExistsError(
+                f"El archivo destino ya existe: {target}. Use overwrite=True para reemplazarlo."
+            )
 
     target.parent.mkdir(parents=True, exist_ok=True)
     tmp_path = target.with_suffix(f"{target.suffix}.tmp_{os.getpid()}")
@@ -281,8 +301,20 @@ def download_zenodo_dataset(
         target_file = target_dir / file_key
         # En Zenodo el link suele ser /content
         content_url = download_link if download_link.endswith("/content") else f"{download_link}/content"
+        expected_size = file_meta.get("size")
 
-        saved_path = download_file(content_url, target_file, overwrite=overwrite)
+        # DECISIÓN DE ARQUITECTURA: Idempotencia para entornos locales y Google Colab.
+        # Si el archivo ya existe y coincide su tamaño oficial en Zenodo, se reutiliza sin re-descargar.
+        if target_file.exists() and not overwrite and expected_size and target_file.stat().st_size == expected_size:
+            logger.info(
+                "Archivo %s ya existe y coincide su tamaño (%d bytes). Omitiendo descarga.",
+                file_key,
+                expected_size,
+            )
+            saved_path = target_file
+        else:
+            saved_path = download_file(content_url, target_file, overwrite=overwrite, check_existing=True)
+
         downloaded_paths.append(saved_path)
 
         sha256_hash = calculate_sha256(saved_path)

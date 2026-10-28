@@ -88,12 +88,22 @@ def test_record_manifest(tmp_path: Path):
 
 
 def test_download_file_no_overwrite(tmp_path: Path):
-    """Verifica que download_file no sobreescriba un archivo si overwrite=False."""
+    """Verifica que download_file lance FileExistsError si overwrite=False y check_existing=False."""
     existing_file = tmp_path / "data.csv"
     existing_file.write_text("ya_existe", encoding="utf-8")
 
     with pytest.raises(FileExistsError, match="El archivo destino ya existe"):
-        download_file("http://example.com/data.csv", existing_file, overwrite=False)
+        download_file("http://example.com/data.csv", existing_file, overwrite=False, check_existing=False)
+
+
+def test_download_file_skip_if_exists(tmp_path: Path):
+    """Verifica la idempotencia: si el archivo ya existe, no se conecta a la red."""
+    existing_file = tmp_path / "cached.csv"
+    existing_file.write_text("datos_en_cache", encoding="utf-8")
+
+    # URL inalcanzable que fallaría inmediatamente si intentase conectar
+    result = download_file("http://host-inalcanzable.local/data.csv", existing_file, check_existing=True)
+    assert result == existing_file
 
 
 def test_download_file_mocked_success(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):

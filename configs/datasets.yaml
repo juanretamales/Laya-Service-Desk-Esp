@@ -2,7 +2,7 @@ schema_version: 1
 sources:
   - id: zenodo_tickets
     name: "Classification of IT Support Tickets"
-    enabled: false
+    enabled: true
     path: data/raw/zenodo_tickets/
     license: "CC-BY-4.0"
     license_verified: true
