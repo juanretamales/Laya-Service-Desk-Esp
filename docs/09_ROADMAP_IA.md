@@ -83,9 +83,10 @@ flowchart TD
   - Mapeo semántico a clases canónicas de [`docs/04_NORMALIZACION.md`](docs/04_NORMALIZACION.md) (`access`, `network`, `hardware`, `software`, `email`, `database`, `other`, `unknown`).
   - No inferir ni inventar etiquetas faltantes: asignación estricta de `unknown`.
   - Verificación mediante suite de 8 tests unitarios en `tests/test_unify.py`.
-- [ ] **2.4 Deduplicación Exacta y Semántica `[Reversible]`:**
+- [x] **2.4 Deduplicación Exacta y Semántica `[Reversible]`:**
   - Deduplicación por hash SHA-256 de texto normalizado (`subject + description`).
-  - Reporte de tasas de duplicados descartados por fuente.
+  - Reporte de tasas de duplicados descartados por fuente (`data/processed/deduplication_stats.json`).
+  - Verificación mediante suite de 4 tests unitarios en `tests/test_deduplicate.py`.
 - [ ] **2.5 Formateo Dual de Datos `[Reversible]`:**
   - Exportar en formato tabular `data/processed/unified_tickets.jsonl`.
   - Adaptar estructura al formato de preguntas tipadas de Laya (`state: {"subject": ..., "body": ...}`, `questions: {...}`).
