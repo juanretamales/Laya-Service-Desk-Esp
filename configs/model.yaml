@@ -1,14 +1,16 @@
 model:
   family: laya
   variant: multilingual
-  model_id: null  # Validar identificador oficial antes de descargar
-  revision: null  # Fijar revision/commit de pesos para reproducibilidad
-  license_verified: false
+  model_id: convaiinnovations/laya-multilingual
+  repository: https://github.com/NandhaKishorM/laya
+  license: Apache-2.0
+  license_verified: true
+  revision: main
 training:
   enabled: false
   seed: 42
   tasks: [category, priority, support_group]
-  strategy: pending_official_api_validation
+  strategy: rlcd_typed_decisions
 quantization:
   enabled: false
   candidate_precisions: [int8, int4]

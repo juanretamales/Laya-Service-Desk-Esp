@@ -1,6 +1,46 @@
-# Estado
-- [x] Estructura documental y Docker CPU-only preparada (sin ejecutar contenedor).
-- [x] Flujo GitHub privado / Colab / Drive documentado (sin operaciones Git).
-- [ ] Verificar modelo Laya y licencias de datasets.
-- [ ] Implementar y validar datasets.
-- [ ] Baseline, fine-tuning, cuantización y paper.
+# Estado de Progreso — Laya Service Desk
+
+Sincronizado con el roadmap granular en [`docs/09_ROADMAP_IA.md`](09_ROADMAP_IA.md):
+
+- [x] **Fase 0 (Parcial): Auditoría y Contratos**
+  - [x] 0.1 Repositorio y checkpoint de Laya verificados (`convaiinnovations/laya-multilingual`, Apache-2.0).
+  - [x] 0.2 API y paradigma de inferencia de Laya verificados (`Router`, decisiones tipadas).
+  - [ ] 0.3 Auditoría y confirmación de licencias de fuentes de datos candidatas.
+  - [ ] 0.4 Matriz de riesgos y restricciones de GPU/PII.
+- [ ] **Fase 1: Ingestión, Descarga Segura y Manifiestos de Datos (Gate G1)**
+  - [ ] 1.1 Módulo `src/ingestion/download.py` (HTTP / Zenodo API + SHA-256).
+  - [ ] 1.2 Manifiesto inmutable `data/raw/manifest.json`.
+  - [ ] 1.3 Fixtures sintéticos en `tests/fixtures/`.
+  - [ ] 1.4 Tests unitarios de descarga en `tests/test_download.py`.
+- [ ] **Fase 2: Normalización, Anonimización PII, Deduplicación y Splits (Gate G2)**
+  - [ ] 2.1 Anonimización PII (`src/preprocessing/anonymize.py`).
+  - [ ] 2.2 Filtro y validación de español (`src/preprocessing/language.py`).
+  - [ ] 2.3 Mapeo canónico de etiquetas en `src/preprocessing/unify.py`.
+  - [ ] 2.4 Deduplicación de tickets.
+  - [ ] 2.5 Formato dual (JSONL tabular + Laya typed questions).
+  - [ ] 2.6 Split estratificado inmutable (Train 70%, Val 15%, Test 15% congelado con hash).
+  - [ ] 2.7 Tests unitarios de normalización y splits.
+- [ ] **Fase 3: Baseline Zero-Shot Laya Multilingual Original (Gate G3)**
+  - [ ] 3.1 Harness de evaluación en `src/evaluation/benchmark.py`.
+  - [ ] 3.2 Inferencia zero-shot sobre test congelado.
+  - [ ] 3.3 Medición de métricas (F1-macro, accuracy, matriz de confusión, latencia, VRAM).
+  - [ ] 3.4 Reporte persistido en `reports/baseline_results.json`.
+- [ ] **Fase 4: Fine-Tuning Laya Multilingual en Colab Pro (Gate G4)**
+  - [ ] 4.1 Configuración de hiperparámetros en `configs/training.yaml`.
+  - [ ] 4.2 Módulo de entrenamiento `src/training/train.py` (RLCD / typed decisions).
+  - [ ] 4.3 Notebook orquestador `notebooks/laya_finetune_service_desk.ipynb`.
+  - [ ] 4.4 Ejecución de entrenamiento y registro de costos GPU en Colab Pro.
+  - [ ] 4.5 Exportación de pesos ajustados a Drive con hash SHA-256.
+- [ ] **Fase 5: Comparación Rigurosa con Test Congelado (Gate G5)**
+  - [ ] 5.1 Evaluación del modelo fine-tuned sobre el test congelado inmutable.
+  - [ ] 5.2 Análisis comparativo estadístico ($\Delta$ F1-macro, matrices de confusión).
+  - [ ] 5.3 Reporte comparativo en `reports/evaluation_comparison.json`.
+- [ ] **Fase 6: Cuantización Post-Training (INT8/INT4) y Trade-off (Gate G6)**
+  - [ ] 6.1 Auditoría de compatibilidad de cuantización en Laya.
+  - [ ] 6.2 Script de conversión en `src/inference/quantize.py`.
+  - [ ] 6.3 Benchmark de cuantización sobre test congelado (Tamaño vs. Latencia vs. F1).
+  - [ ] 6.4 Reporte de compromiso en `reports/quantization_results.json`.
+- [ ] **Fase 7: Síntesis Científica, Paper y Auditoría de Reproducibilidad**
+  - [ ] 7.1 Borrador del paper / reporte técnico consolidado.
+  - [ ] 7.2 Auditoría de reproducibilidad de punta a punta.
+  - [ ] 7.3 Cierre formal de documentación.
