@@ -1,0 +1,15 @@
+.git
+.env
+.env.*
+!.env.example
+__pycache__/
+.pytest_cache/
+tmp/
+data/
+experiments/
+reports/
+*.pt
+*.pth
+*.safetensors
+*.bin
+*.gguf

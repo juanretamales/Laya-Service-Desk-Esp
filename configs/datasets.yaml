@@ -1,0 +1,22 @@
+schema_version: 1
+sources:
+  - id: kaggle_multilingual
+    enabled: false
+    path: data/raw/kaggle_multilingual.csv
+    license_verified: false
+    column_map: {ticket_id: ticket_id, subject: subject, description: description, category: category, priority: priority, support_group: support_group}
+  - id: zenodo_tickets
+    enabled: false
+    path: data/raw/zenodo_tickets.csv
+    license_verified: false
+    column_map: {}
+  - id: mendeley_helpdesk
+    enabled: false
+    path: data/raw/mendeley_helpdesk.csv
+    license_verified: false
+    column_map: {}
+  - id: mdpi_it_incidents
+    enabled: false
+    path: data/raw/mdpi_it_incidents.csv
+    license_verified: false
+    column_map: {}

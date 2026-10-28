@@ -1,0 +1,15 @@
+model:
+  family: laya
+  variant: multilingual
+  model_id: null  # Validar identificador oficial antes de descargar
+  revision: null  # Fijar revision/commit de pesos para reproducibilidad
+  license_verified: false
+training:
+  enabled: false
+  seed: 42
+  tasks: [category, priority, support_group]
+  strategy: pending_official_api_validation
+quantization:
+  enabled: false
+  candidate_precisions: [int8, int4]
+  require_compatibility_check: true

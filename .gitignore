@@ -1,0 +1,101 @@
+# ==========================================
+# Laya Service Desk — .gitignore
+# ==========================================
+
+# --- Entornos Virtuales y Paquetes ---
+.venv/
+venv/
+env/
+ENV/
+build/
+dist/
+*.egg-info/
+*.egg
+
+# --- Bytecode y Caché de Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.cache/
+
+# --- Cobertura de Pruebas ---
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+
+# --- Variables de Entorno y Secretos ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials.json
+token.json
+
+# --- Carpeta Temporal, Planes y Scratchpads ---
+tmp/*
+!tmp/.gitkeep
+plans/*
+
+# --- Datasets y Datos Crudos/Procesados (PII / Licencias) ---
+# Los datasets no se suben al repositorio; residen en almacenamiento externo/Drive
+data/*
+*.csv
+*.tsv
+*.jsonl
+*.parquet
+# Permitir fixtures de pruebas dentro de tests/
+!tests/**/*.csv
+!tests/**/*.tsv
+!tests/**/*.jsonl
+!tests/**/*.json
+
+# --- Pesos de Modelos, Checkpoints y Cuantizaciones ---
+# Artefactos pesados no se versionan en Git
+*.safetensors
+*.pt
+*.pth
+*.bin
+*.onnx
+*.gguf
+*.tflite
+models/*
+checkpoints/*
+weights/*
+
+# --- Logs, Experimentos y Monitoreo ML ---
+experiments/*
+reports/*
+wandb/
+runs/
+mlruns/
+*.log
+
+# --- Jupyter Notebooks ---
+.ipynb_checkpoints/
+*-checkpoint.ipynb
+
+# --- Editores e IDEs ---
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+.gemini/
+
+# --- Sistema Operativo ---
+.DS_Store
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# --- Preservación Estructural ---
+!**/.gitkeep

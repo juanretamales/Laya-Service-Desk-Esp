@@ -1,0 +1,6 @@
+model: laya-multilingual
+model_id: null
+revision: null
+seed: 42
+train_enabled: false
+# Ajustar solo despues de validar API y recursos Colab

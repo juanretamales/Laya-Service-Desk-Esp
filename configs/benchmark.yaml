@@ -1,0 +1,3 @@
+models: [original, fine_tuned, fine_tuned_quantized]
+metrics: [f1_macro, accuracy, latency_ms, peak_memory_mb, model_size_mb]
+test_split_frozen: true

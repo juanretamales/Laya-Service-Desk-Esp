@@ -1,0 +1,2 @@
+# PENDIENTE: fijar versiones una vez verificada la API oficial de Laya.
+# No instalar dependencias de Llama por defecto.
