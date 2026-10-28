@@ -87,18 +87,19 @@ flowchart TD
   - Deduplicación por hash SHA-256 de texto normalizado (`subject + description`).
   - Reporte de tasas de duplicados descartados por fuente (`data/processed/deduplication_stats.json`).
   - Verificación mediante suite de 4 tests unitarios en `tests/test_deduplicate.py`.
-- [ ] **2.5 Formateo Dual de Datos `[Reversible]`:**
+- [x] **2.5 Formateo Dual de Datos (`src/preprocessing/format_laya.py`) `[Reversible]`:**
   - Exportar en formato tabular `data/processed/unified_tickets.jsonl`.
   - Adaptar estructura al formato de preguntas tipadas de Laya (`state: {"subject": ..., "body": ...}`, `questions: {...}`).
-- [ ] **2.6 Particionado Estratificado sin Fuga (`src/preprocessing/split.py`) `[Reversible]`:**
-  - Split: 70% Train, 15% Validation, 15% Test.
-  - Estratificación por `category` (o multi-etiqueta si aplica).
-  - **Congelamiento de Test:** fijar hash SHA-256 de `data/splits/test.jsonl`. Queda prohibido modificarlo o consultarlo durante entrenamiento.
-  - Verificación de no solapamiento (*zero leakage*): validar intersección vacía de textos entre particiones.
-- [ ] **2.7 Tests Unitarios de Preprocesamiento (`tests/test_unify.py`, `tests/test_splits.py`) `[Reversible]`:**
-  - Probar normalización, sanitización PII, integridad de mapeos y splits inmutables.
+  - Generado `data/processed/laya_formatted_tickets.jsonl` (1.457 registros).
+- [x] **2.6 Particionado Estratificado sin Fuga (`src/preprocessing/split.py`) `[Reversible]`:**
+  - Split: 70% Train (1.021), 15% Validation (219), 15% Test (217).
+  - Estratificación determinista por `category` (`seed=42`).
+  - **Congelamiento de Test:** fijado hash SHA-256 inmutable de `data/splits/test.jsonl` (`b80cf24430cdfb12a9ace43cccc96cb8c4a5dcd19e8f5dc4ada1bf2cfeb969c4`). Queda prohibido modificarlo o consultarlo durante entrenamiento.
+  - Verificación de no solapamiento (*zero leakage*): 0 colisiones de hash entre particiones. Manifiesto en `data/splits/splits_manifest.json`.
+- [x] **2.7 Tests Unitarios de Preprocesamiento (`tests/test_unify.py`, `tests/test_splits.py`, `tests/test_format_laya.py`) `[Reversible]`:**
+  - Probar normalización, sanitización PII, integridad de mapeos, formato dual Laya y splits inmutables (52/52 tests pasando, 0 errores flake8).
 
-> **Exit Gate G2:** Dataset unificado generado en `data/processed/`, test set congelado con hash en `data/splits/` y 0% de fuga verificado por tests unitarios.
+> **Exit Gate G2 (SUPERADO):** Dataset unificado y deduplicado generado en `data/processed/`, test set congelado con hash en `data/splits/` y 0% de fuga verificado por tests unitarios.
 
 ---
 

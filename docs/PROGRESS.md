@@ -16,14 +16,14 @@ Sincronizado con el roadmap granular en [`docs/09_ROADMAP_IA.md`](09_ROADMAP_IA.
   - [x] 1.2 Manifiesto inmutable `data/raw/manifest.json`.
   - [x] 1.3 Fixtures sintéticos en `tests/fixtures/synthetic_tickets.csv`.
   - [x] 1.4 Tests unitarios de descarga en `tests/test_download.py` (100% pasando).
-- [ ] **Fase 2: Normalización, Anonimización PII, Deduplicación y Splits (Gate G2)**
+- [x] **Fase 2: Normalización, Anonimización PII, Deduplicación y Splits (Gate G2 Aprobado)**
   - [x] 2.1 Anonimización PII (`src/preprocessing/anonymize.py` + tests unitarios).
   - [x] 2.2 Filtro y validación de español (`src/preprocessing/language.py` + tests unitarios).
   - [x] 2.3 Mapeo canónico de etiquetas en `src/preprocessing/unify.py` (8/8 tests).
   - [x] 2.4 Deduplicación de tickets (`src/preprocessing/deduplicate.py` + tests unitarios).
-  - [ ] 2.5 Formato dual (JSONL tabular + Laya typed questions).
-  - [ ] 2.6 Split estratificado inmutable (Train 70%, Val 15%, Test 15% congelado con hash).
-  - [ ] 2.7 Tests unitarios de normalización y splits.
+  - [x] 2.5 Formato dual (`data/processed/unified_tickets.jsonl` + `data/processed/laya_formatted_tickets.jsonl`).
+  - [x] 2.6 Split estratificado inmutable (Train 70% [1.021], Val 15% [219], Test 15% [217] congelado con SHA-256 `b80cf24430cdfb12a9ace43cccc96cb8c4a5dcd19e8f5dc4ada1bf2cfeb969c4` y 0% de fuga verificado).
+  - [x] 2.7 Tests unitarios de normalización y splits (52/52 tests pasando en `tests/`, 0 errores flake8).
 - [ ] **Fase 3: Baseline Zero-Shot Laya Multilingual Original (Gate G3)**
   - [ ] 3.1 Harness de evaluación en `src/evaluation/benchmark.py`.
   - [ ] 3.2 Inferencia zero-shot sobre test congelado.
