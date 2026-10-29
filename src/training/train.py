@@ -18,12 +18,13 @@ import yaml
 
 import torch
 import torch.nn.functional as F
-from safetensors.torch import save_file
+from safetensors.torch import load_file, save_file
 
 from src.evaluation.benchmark import compute_classification_metrics
 from src.evaluation.plotting import (
     export_training_curves_csv,
     export_training_curves_json,
+    load_training_curves,
     plot_all_training_visualizations,
 )
 from src.preprocessing.split import calculate_file_sha256, verify_zero_leakage
@@ -235,15 +236,17 @@ def train_laya(
     dry_run: bool = False,
     override_epochs: Optional[int] = None,
     override_patience: Optional[int] = None,
+    override_resume: Optional[bool] = None,
 ) -> Dict[str, Any]:
-    """Ejecuta el protocolo de fine-tuning para Laya Multilingual con early stopping.
+    """Ejecuta el protocolo de fine-tuning para Laya Multilingual con early stopping y resume.
 
     Args:
         config_path: Ruta a configs/training.yaml.
         device_name: Dispositivo ('cpu' o 'cuda').
         dry_run: Si es True, ejecuta solo un paso mínimo de prueba sin entrenamiento completo.
-        override_epochs: Sobrescribe el número de épocas para pruebas rápidas.
+        override_epochs: Sobrescribe el número de épocas para pruebas rápidas o sesiones incrementales.
         override_patience: Sobrescribe la paciencia de early stopping.
+        override_resume: Si es True, reanuda desde last_model.safetensors y training_curves.csv si existen.
 
     Returns:
         Diccionario con el reporte final de entrenamiento y metadatos de checkpoints (best y last).
@@ -320,6 +323,11 @@ def train_laya(
 
     scaler = torch.amp.GradScaler("cuda", enabled=use_cuda)
 
+    # Configuración de reanudación (Resume)
+    resume = override_resume if override_resume is not None else bool(
+        cfg.get("training", {}).get("resume", True)
+    )
+
     best_val_metric = -1.0
     best_epoch = 0
     epochs_without_improvement = 0
@@ -329,14 +337,69 @@ def train_laya(
     best_weights_path = checkpoint_dir / "best_model.safetensors"
     last_weights_path = checkpoint_dir / "last_model.safetensors"
     default_model_path = checkpoint_dir / "model.safetensors"
+    curves_csv_path = checkpoint_dir / "training_curves.csv"
+    curves_json_path = checkpoint_dir / "training_curves.json"
+
+    resumed_from_weights = False
+    start_epoch = 1
+
+    if resume and last_weights_path.exists():
+        print(f"\n[RESUME] Checkpoint previo detectado: {last_weights_path}")
+        try:
+            state_dict = load_file(str(last_weights_path))
+            agent.model.load_state_dict(state_dict)
+            resumed_from_weights = True
+            print(f"  -> Pesos del modelo restaurados exitosamente desde {last_weights_path.name}")
+        except Exception as e:
+            print(f"  -> [AVISO] No se pudieron cargar los pesos de {last_weights_path}: {e}")
+
+        # Comprobar si existe archivo de curvas previo para continuar la numeración
+        if curves_csv_path.exists() or curves_json_path.exists():
+            curves_source = curves_csv_path if curves_csv_path.exists() else curves_json_path
+            try:
+                prev_history = load_training_curves(curves_source)
+                if prev_history:
+                    history = list(prev_history)
+                    last_recorded_epoch = max(int(h.get("epoch", 0)) for h in history)
+                    start_epoch = last_recorded_epoch + 1
+                    print(
+                        f"  -> Archivo de curvas encontrado ({len(history)} épocas registradas). "
+                        f"Última época completada: {last_recorded_epoch}."
+                    )
+                    # Restaurar la mejor métrica histórica
+                    for h in history:
+                        f1_val = float(h.get("overall_macro_f1", 0.0))
+                        if metric_target_name == "category_macro_f1":
+                            f1_val = float(h.get("category_macro_f1", 0.0))
+                        if f1_val > best_val_metric:
+                            best_val_metric = f1_val
+                            best_epoch = int(h.get("epoch", 0))
+                    print(
+                        f"  -> Mejor métrica histórica restaurada: {metric_target_name}={best_val_metric:.4f} "
+                        f"(Época {best_epoch})"
+                    )
+            except Exception as e:
+                print(f"  -> [AVISO] Error al leer archivo de curvas ({e}). Iniciando registro desde época 1.")
+                history = []
+                start_epoch = 1
+        else:
+            print(
+                f"  -> No se encontró archivo de curvas previo. "
+                f"Iniciando registro desde época 1 tomando {last_weights_path.name} como punto de partida."
+            )
+            start_epoch = 1
+    elif resume and not last_weights_path.exists():
+        print(f"\n[RESUME] Modo resume activo pero no existe {last_weights_path.name}. Entrenando desde modelo base.")
+
+    end_epoch = start_epoch + epochs - 1
 
     print(
         f"Iniciando fine-tuning: {len(train_records)} registros de entrenamiento, "
-        f"{epochs} épocas (Early Stopping Paciencia: {patience})..."
+        f"{epochs} épocas a ejecutar (del {start_epoch} al {end_epoch}, Early Stopping Paciencia: {patience})..."
     )
     start_time = datetime.now(timezone.utc)
 
-    for epoch in range(1, epochs + 1):
+    for epoch in range(start_epoch, end_epoch + 1):
         agent.model.train()
         random.shuffle(train_records)
         epoch_loss = 0.0
@@ -396,7 +459,7 @@ def train_laya(
             current_eval_metric = overall_macro_f1
 
         # Mostrar métricas completas calculadas por época
-        print(f"\n--- Época {epoch}/{epochs} Completada ---")
+        print(f"\n--- Época {epoch}/{end_epoch} Completada ---")
         print(f"  Pérdida Entrenamiento (Train Loss): {avg_train_loss:.4f}")
         print(f"  Pérdida Validación (Val Loss):       {val_loss:.4f}")
         print("  Métricas de Validación por Tarea:")
@@ -439,8 +502,8 @@ def train_laya(
         else:
             epochs_without_improvement += 1
             print(
-                f"  -> [SIN MEJORA] Épocas consecutivas sin mejora: {epochs_without_improvement}/{patience} "
-                f"(Mejor época fue {best_epoch} con {best_val_metric:.4f})"
+                f"  -> [SIN MEJORA] Épocas consecutivas sin mejora en esta sesión: {epochs_without_improvement}/"
+                f"{patience} (Mejor época histórica fue {best_epoch} con {best_val_metric:.4f})"
             )
 
             # Verificar criterio de early stopping
@@ -529,8 +592,11 @@ def train_laya(
             **viz_reports,
         },
         "hyperparameters": {
-            "epochs_planned": epochs,
-            "epochs_executed": len(history),
+            "epochs_planned_in_session": epochs,
+            "start_epoch": start_epoch,
+            "end_epoch": end_epoch,
+            "total_epochs_in_history": len(history),
+            "resumed_from_weights": resumed_from_weights,
             "batch_size": batch_size,
             "lr_encoder": lr_enc,
             "lr_head": lr_head,
@@ -556,8 +622,14 @@ def main() -> None:
     parser.add_argument("--config", type=str, default="configs/training.yaml", help="Ruta a training.yaml")
     parser.add_argument("--device", type=str, default="cpu", choices=["cpu", "cuda"], help="Dispositivo")
     parser.add_argument("--dry-run", action="store_true", help="Paso de prueba rápido con subconjunto mínimo")
-    parser.add_argument("--epochs", type=int, default=None, help="Sobrescribir épocas")
+    parser.add_argument("--epochs", type=int, default=None, help="Sobrescribir épocas a ejecutar en la sesión")
     parser.add_argument("--patience", type=int, default=None, help="Paciencia de early stopping")
+    parser.add_argument(
+        "--resume",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Reanudar entrenamiento desde last_model.safetensors y training_curves.csv si existen",
+    )
     args = parser.parse_args()
 
     train_laya(
@@ -566,6 +638,7 @@ def main() -> None:
         dry_run=args.dry_run,
         override_epochs=args.epochs,
         override_patience=args.patience,
+        override_resume=args.resume,
     )
 
 

@@ -194,14 +194,14 @@ def plot_loss_curve(
             xytext=(best_epoch + 0.1, best_val + 0.05 * (max(val_loss) - min(val_loss) + 0.01)),
             arrowprops=dict(arrowstyle="->", color=COLOR_BEST_LINE, lw=1.2),
             fontsize=9,
-            fontweight="semibold",
+            fontweight="bold",
             bbox=dict(boxstyle="round,pad=0.3", fc="white", ec=COLOR_BEST_LINE, alpha=0.9),
         )
 
     ax.set_title(title or "Evolución de la Pérdida de Entrenamiento y Validación - Laya Service Desk",
                  fontsize=12, fontweight="bold", pad=12)
-    ax.set_xlabel("Época de Entrenamiento", fontsize=10, fontweight="semibold")
-    ax.set_ylabel("Pérdida (Cross-Entropy Loss)", fontsize=10, fontweight="semibold")
+    ax.set_xlabel("Época de Entrenamiento", fontsize=10, fontweight="bold")
+    ax.set_ylabel("Pérdida (Cross-Entropy Loss)", fontsize=10, fontweight="bold")
     ax.set_xticks(epochs)
     ax.grid(True, linestyle=":", alpha=0.6)
     ax.legend(frameon=True, facecolor="white", edgecolor="lightgray", fontsize=9, loc="upper right")
@@ -287,14 +287,14 @@ def plot_metrics_curves(
             xytext=(best_epoch + 0.1, best_f1 - 0.04),
             arrowprops=dict(arrowstyle="->", color=COLOR_BEST_LINE, lw=1.2),
             fontsize=9,
-            fontweight="semibold",
+            fontweight="bold",
             bbox=dict(boxstyle="round,pad=0.3", fc="white", ec=COLOR_BEST_LINE, alpha=0.9),
         )
 
     ax.set_title(title or "Evolución de Rendimiento Multitarea (Validation Macro-F1) - Laya",
                  fontsize=12, fontweight="bold", pad=12)
-    ax.set_xlabel("Época de Entrenamiento", fontsize=10, fontweight="semibold")
-    ax.set_ylabel("Macro-F1 Score", fontsize=10, fontweight="semibold")
+    ax.set_xlabel("Época de Entrenamiento", fontsize=10, fontweight="bold")
+    ax.set_ylabel("Macro-F1 Score", fontsize=10, fontweight="bold")
     ax.set_xticks(epochs)
     ax.set_ylim(0.0, 1.05)
     ax.grid(True, linestyle=":", alpha=0.6)
@@ -348,8 +348,8 @@ def plot_training_dashboard(
         ax_loss.axvline(x=best_epoch, color=COLOR_BEST_LINE, linestyle="--", linewidth=1.5,
                         label=f"Mejor Época ({best_epoch})")
     ax_loss.set_title("Curvas de Pérdida (Cross-Entropy)", fontsize=11, fontweight="bold")
-    ax_loss.set_xlabel("Época", fontsize=10, fontweight="semibold")
-    ax_loss.set_ylabel("Pérdida", fontsize=10, fontweight="semibold")
+    ax_loss.set_xlabel("Época", fontsize=10, fontweight="bold")
+    ax_loss.set_ylabel("Pérdida", fontsize=10, fontweight="bold")
     ax_loss.set_xticks(epochs)
     ax_loss.grid(True, linestyle=":", alpha=0.6)
     ax_loss.legend(frameon=True, fontsize=9, loc="upper right")
@@ -376,8 +376,8 @@ def plot_training_dashboard(
         ax_f1.axvline(x=best_epoch, color=COLOR_BEST_LINE, linestyle="--", linewidth=1.5,
                       label=f"Mejor Época ({best_epoch})")
     ax_f1.set_title("Evolución de Macro-F1 por Tarea", fontsize=11, fontweight="bold")
-    ax_f1.set_xlabel("Época", fontsize=10, fontweight="semibold")
-    ax_f1.set_ylabel("Macro-F1 Score", fontsize=10, fontweight="semibold")
+    ax_f1.set_xlabel("Época", fontsize=10, fontweight="bold")
+    ax_f1.set_ylabel("Macro-F1 Score", fontsize=10, fontweight="bold")
     ax_f1.set_xticks(epochs)
     ax_f1.set_ylim(0.0, 1.05)
     ax_f1.grid(True, linestyle=":", alpha=0.6)

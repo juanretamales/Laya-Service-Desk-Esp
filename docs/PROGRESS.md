@@ -31,7 +31,7 @@ Sincronizado con el roadmap granular en [`docs/09_ROADMAP_IA.md`](09_ROADMAP_IA.
   - [x] 3.4 Reporte persistido en `reports/baseline_results.json` con hash de test verificado (`b80cf24430cdfb12a9ace43cccc96cb8c4a5dcd19e8f5dc4ada1bf2cfeb969c4`).
 - [ ] **Fase 4: Fine-Tuning Laya Multilingual en Colab Pro (Gate G4)**
   - [x] 4.1 Configuración de hiperparámetros en `configs/training.yaml` (aislamiento estricto, seed: 42).
-  - [x] 4.2 Módulo de entrenamiento `src/training/train.py` (métricas por época, guardado dual best/last, early stopping y exportación automática de `training_curves.csv` y `training_curves.json`).
+  - [x] 4.2 Módulo de entrenamiento `src/training/train.py` (métricas por época, guardado dual best/last, early stopping, exportación automática de `training_curves.csv`/`json` y reanudación incremental `resume` desde `last_model`).
   - [x] 4.3 Módulo de curvas científicas `src/evaluation/plotting.py` y notebook orquestador `notebooks/laya_finetune_service_desk.ipynb` (gráficos a 300 DPI en `reports/figures/`: pérdida, métricas por tarea y dashboard general).
   - [ ] 4.4 Ejecución de entrenamiento y registro de costos GPU en Colab Pro.
   - [ ] 4.5 Exportación de pesos ajustados a Drive con hash SHA-256.

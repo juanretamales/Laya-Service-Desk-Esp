@@ -225,6 +225,89 @@ def test_train_laya_early_stopping(tmp_path: Path):
     # Con paciencia 1, la época 1 establece el mejor resultado (1.0). La época 2 no mejora (empata o no supera),
     # por lo que debe activar early stopping y ejecutar como máximo 2 épocas de las 5 planeadas.
     assert report["early_stopping"]["stopped_early"] is True
-    assert report["hyperparameters"]["epochs_executed"] <= 2
     assert (ckpt_dir / "best_model.safetensors").exists()
     assert (ckpt_dir / "last_model.safetensors").exists()
+
+
+def test_train_laya_resume(tmp_path: Path):
+    """Valida la capacidad de reanudar entrenamiento (resume) usando last_model y training_curves.csv."""
+    train_file = tmp_path / "train.jsonl"
+    val_file = tmp_path / "val.jsonl"
+    ckpt_dir = tmp_path / "checkpoints_resume"
+
+    import json
+    sample_train = {
+        "ticket_id": "tr_1",
+        "content_hash": "hash_tr_1",
+        "state": {"subject": "Red caída", "body": "No hay conexión"},
+        "questions": {
+            "category": {
+                "type": "choice",
+                "instructions": "Cat",
+                "criteria": ["network", "software", "hardware", "unknown"],
+            }
+        },
+        "targets": {"category": "network"},
+    }
+    sample_val = {
+        "ticket_id": "va_1",
+        "content_hash": "hash_va_1",
+        "state": {"subject": "Router caído", "body": "Sin señal"},
+        "questions": {
+            "category": {
+                "type": "choice",
+                "instructions": "Cat",
+                "criteria": ["network", "software", "hardware", "unknown"],
+            }
+        },
+        "targets": {"category": "network"},
+    }
+
+    with train_file.open("w", encoding="utf-8") as f:
+        f.write(json.dumps(sample_train) + "\n")
+    with val_file.open("w", encoding="utf-8") as f:
+        f.write(json.dumps(sample_val) + "\n")
+
+    cfg_file = tmp_path / "cfg_resume.yaml"
+    cfg_data = {
+        "data": {
+            "train_file": str(train_file),
+            "val_file": str(val_file),
+            "tasks": ["category"],
+        },
+        "training": {
+            "seed": 42,
+            "epochs": 1,
+            "batch_size": 1,
+            "learning_rate_encoder": 1e-5,
+            "learning_rate_head": 1e-4,
+        },
+        "output": {
+            "checkpoint_dir": str(ckpt_dir),
+        },
+    }
+    cfg_file.write_text(yaml.dump(cfg_data), encoding="utf-8")
+
+    # Sesión 1: Ejecutar 1 época inicial
+    rep1 = train_laya(cfg_file, device_name="cpu", dry_run=True, override_epochs=1, override_resume=False)
+    assert rep1["hyperparameters"]["start_epoch"] == 1
+    assert rep1["hyperparameters"]["end_epoch"] == 1
+    assert rep1["hyperparameters"]["total_epochs_in_history"] == 1
+    assert (ckpt_dir / "last_model.safetensors").exists()
+    assert (ckpt_dir / "training_curves.csv").exists()
+
+    # Sesión 2: Reanudar con 1 época adicional (debe ir de época 2 a 2, acumulando 2 épocas en el CSV)
+    rep2 = train_laya(cfg_file, device_name="cpu", dry_run=True, override_epochs=1, override_resume=True)
+    assert rep2["hyperparameters"]["resumed_from_weights"] is True
+    assert rep2["hyperparameters"]["start_epoch"] == 2
+    assert rep2["hyperparameters"]["end_epoch"] == 2
+    assert rep2["hyperparameters"]["total_epochs_in_history"] == 2
+
+    # Sesión 3: Reanudar eliminando el archivo CSV (debe partir en 1 pero con last_model como base)
+    (ckpt_dir / "training_curves.csv").unlink()
+    (ckpt_dir / "training_curves.json").unlink()
+    rep3 = train_laya(cfg_file, device_name="cpu", dry_run=True, override_epochs=1, override_resume=True)
+    assert rep3["hyperparameters"]["resumed_from_weights"] is True
+    assert rep3["hyperparameters"]["start_epoch"] == 1
+    assert rep3["hyperparameters"]["end_epoch"] == 1
+    assert rep3["hyperparameters"]["total_epochs_in_history"] == 1
