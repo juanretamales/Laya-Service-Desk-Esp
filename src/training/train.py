@@ -123,12 +123,13 @@ def encode_record_items(
 
     # Anotar etiquetas supervisadas en cada item codificado
     valid_items = []
-    for item in items:
-        qid = item.get("id")
+    for qid, item in zip(active_qids, items):
         if qid not in internal:
             continue
 
+        item["id"] = qid
         crit_keys = list(internal[qid]["crit"].keys())
+        item["crit_keys"] = crit_keys
         true_label = str(targets.get(qid, "unknown"))
 
         if true_label in crit_keys:
@@ -185,10 +186,14 @@ def evaluate_validation(
                 if k in ["input_ids", "attention_mask", "marker_pos", "marker_mask", "qtype",
                          "position_ids", "option_ids"]
             }
-            logits, _ = agent.model(**fwd_args)
             labels = batch["label"].to(device)
 
-            loss = F.cross_entropy(logits, labels)
+            use_cuda_eval = device.type == "cuda"
+            autocast_ctx = torch.autocast("cuda", dtype=torch.float16) if use_cuda_eval else contextlib.nullcontext()
+            with autocast_ctx:
+                logits, _ = agent.model(**fwd_args)
+                loss = F.cross_entropy(logits, labels)
+
             total_loss += float(loss.item())
             total_batches += 1
 
@@ -196,9 +201,7 @@ def evaluate_validation(
             pred_indices = logits.argmax(dim=-1).cpu().numpy()
             for i, it in enumerate(items):
                 qid = it.get("id")
-                crit_keys = it.get("meta", {}).get("crit_keys")
-                if not crit_keys and "crit" in it:
-                    crit_keys = list(it["crit"].keys())
+                crit_keys = it.get("crit_keys", [])
                 pred_idx = pred_indices[i]
                 true_lbl = str(record.get("targets", {}).get(qid, "unknown"))
                 pred_lbl = crit_keys[pred_idx] if crit_keys and pred_idx < len(crit_keys) else "unknown"

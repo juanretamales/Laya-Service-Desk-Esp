@@ -23,7 +23,7 @@ data:
 
 training:
   seed: 42
-  epochs: 5
+  epochs: 100
   batch_size: 16
   gradient_accumulation_steps: 1
   learning_rate_encoder: 2.0e-5
@@ -34,7 +34,7 @@ training:
   optimizer: adamw
   lr_scheduler: cosine
   mixed_precision: fp16
-  early_stopping_patience: 3
+  early_stopping_patience: 10
   eval_every_n_epochs: 1
 
 calibration:

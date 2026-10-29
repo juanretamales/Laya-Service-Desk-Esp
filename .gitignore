@@ -56,7 +56,7 @@ data/*
 !tests/**/*.json
 
 # --- Pesos de Modelos, Checkpoints y Cuantizaciones ---
-# Artefactos pesados no se versionan en Git
+# Artefactos pesados no se versionan en Git para evitar un repositorio gigante
 *.safetensors
 *.pt
 *.pth
@@ -64,17 +64,22 @@ data/*
 *.onnx
 *.gguf
 *.tflite
-models/*
-checkpoints/*
-weights/*
+models/
+checkpoints/
+weights/
+!checkpoints/.gitkeep
+!models/.gitkeep
 
-# --- Logs, Experimentos y Monitoreo ML ---
-experiments/*
-reports/*
+# --- Logs, Experimentos, Resultados de Entrenamiento y Monitoreo ML ---
+experiments/
+reports/
+!reports/.gitkeep
 wandb/
 runs/
 mlruns/
 *.log
+training_curves.*
+training_report.json
 
 # --- Jupyter Notebooks ---
 .ipynb_checkpoints/
