@@ -136,9 +136,8 @@ flowchart TD
   - Implementado pipeline de ajuste supervisado para decisiones tipadas (`choice`) de Laya con Cross-Entropy multicapa.
   - Validación continua en cada época calculando métricas exhaustivas por tarea (Train/Val Loss, Acc, Macro-F1, Micro-F1).
   - Guardado dual de checkpoints: mejor modelo (`best_model.safetensors` / `model.safetensors`) y último modelo (`last_model.safetensors`).
-  - Criterio de Early Stopping con paciencia configurable (`early_stopping_patience: 10` en `configs/training.yaml` o CLI `--patience`).
+  - Criterio de Early Stopping con paciencia configurable (`early_stopping_patience: 3` en `configs/training.yaml` o CLI `--patience`).
   - Exportación automática de curvas de entrenamiento en `training_curves.csv` y `training_curves.json`.
-  - Capacidad de reanudación incremental (`resume`): retoma los pesos de `last_model.safetensors` y continúa la numeración de épocas desde la última fila registrada en `training_curves.csv`.
 - [x] **4.3 Curvas de Aprendizaje Científicas y Notebook Orquestador (`src/evaluation/plotting.py` y `notebooks/laya_finetune_service_desk.ipynb`) `[Reversible]`:**
   - Implementado módulo `src/evaluation/plotting.py` para exportar figuras de calidad de publicación a 300 DPI (`reports/figures/` y réplica en `checkpoints/laya_service_desk/figures/`):
     - Curva de Pérdida (`training_loss_curve.png`): Train vs. Validation Loss con marcador vertical de mejor época por Early Stopping.

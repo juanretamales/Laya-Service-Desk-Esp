@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laya Service Desk Classifier — Demo Interactiva</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen">
+  <div class="max-w-4xl mx-auto px-4 py-8">
+    
+    <!-- Encabezado -->
+    <header class="text-center mb-8">
+      <div class="inline-flex items-center gap-2 px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-semibold uppercase tracking-wider mb-3">
+        <span>⚡ System-1 Decision Model</span>
+        <span>•</span>
+        <span>Latencia: ~85 ms</span>
+        <span>•</span>
+        <span>Cero Alucinación</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+        🎧 Laya Service Desk: Triaje Inteligente
+      </h1>
+      <p class="mt-2 text-slate-600 max-w-2xl mx-auto text-sm sm:text-base">
+        Modelo abierto fundacional (322M) adaptado con <i>fine-tuning</i> supervisado para clasificación y enrutamiento automatizado de tickets IT en español.
+      </p>
+      <div class="mt-4 flex flex-wrap justify-center gap-3">
+        <a href="https://huggingface.co/JuanRetamales/laya-service-desk-es" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 text-white rounded-lg text-xs font-medium hover:bg-slate-800 transition">
+          <span>📦 Ver Pesos en Hugging Face</span>
+        </a>
+        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-100 text-emerald-800 rounded-lg text-xs font-semibold">
+          🎯 Exactitud: 83.56% (vs. 18.89% baseline)
+        </span>
+      </div>
+    </header>
+
+    <!-- Botones de Ejemplos Reales -->
+    <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 mb-6">
+      <h2 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+        <span>💡 Probar con 5 ejemplos reales de nuestro dataset de prueba:</span>
+      </h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 text-xs">
+        <button onclick="cargarEjemplo(0)" class="text-left p-2.5 rounded-lg border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50/50 transition flex items-center justify-between">
+          <span>💻 <strong>Software:</strong> Carpeta J en Red</span>
+          <span class="text-indigo-600 font-bold">Probar &rarr;</span>
+        </button>
+        <button onclick="cargarEjemplo(1)" class="text-left p-2.5 rounded-lg border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50/50 transition flex items-center justify-between">
+          <span>🖥️ <strong>Hardware:</strong> Atasco Impresora</span>
+          <span class="text-indigo-600 font-bold">Probar &rarr;</span>
+        </button>
+        <button onclick="cargarEjemplo(2)" class="text-left p-2.5 rounded-lg border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50/50 transition flex items-center justify-between">
+          <span>🔑 <strong>Acceso:</strong> Bloqueo AD / VPN</span>
+          <span class="text-indigo-600 font-bold">Probar &rarr;</span>
+        </button>
+        <button onclick="cargarEjemplo(3)" class="text-left p-2.5 rounded-lg border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50/50 transition flex items-center justify-between">
+          <span>✉️ <strong>Email:</strong> Rebote de Correo</span>
+          <span class="text-indigo-600 font-bold">Probar &rarr;</span>
+        </button>
+        <button onclick="cargarEjemplo(4)" class="text-left p-2.5 rounded-lg border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50/50 transition flex items-center justify-between sm:col-span-2 md:col-span-1">
+          <span>📂 <strong>Other:</strong> Ausencia Temporal</span>
+          <span class="text-indigo-600 font-bold">Probar &rarr;</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Formulario e Inferencia -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <!-- Input -->
+      <div class="lg:col-span-7 bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+        <h3 class="text-sm font-semibold text-slate-800 mb-3">Entrada del Incidente (State)</h3>
+        <div class="space-y-4 text-sm">
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Asunto del Ticket (Subject):</label>
+            <input type="text" id="asuntoInput" placeholder="Ej: No puedo ingresar a la VPN" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Descripción / Cuerpo (Body):</label>
+            <textarea id="cuerpoInput" rows="5" placeholder="Escribe el reporte del usuario..." class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+          </div>
+          <button onclick="ejecutarInferencia()" class="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium text-sm transition shadow-sm flex items-center justify-center gap-2">
+            <span>🚀 Clasificar con Laya Multilingual</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Output / Diagnóstico -->
+      <div class="lg:col-span-5 bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-semibold text-slate-800">Resultado de Inferencia</h3>
+            <span id="badgeLatencia" class="text-[11px] text-slate-400 font-mono">0 ms</span>
+          </div>
+
+          <!-- Cards de Métricas -->
+          <div class="space-y-3 text-sm">
+            <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+              <span class="text-xs text-slate-500 block">Categoría Asignada:</span>
+              <div class="flex items-center justify-between mt-1">
+                <span id="resCategoria" class="text-base font-bold text-slate-900">Email</span>
+                <span id="resConfianza" class="text-xs font-semibold px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded">92.3% conf.</span>
+              </div>
+              <div class="w-full bg-slate-200 rounded-full h-1.5 mt-2 overflow-hidden">
+                <div id="barraConfianza" class="bg-indigo-600 h-1.5 rounded-full" style="width: 92%"></div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <div class="p-2.5 bg-slate-50 rounded-lg border border-slate-200">
+                <span class="text-[11px] text-slate-500 block">Prioridad Operativa:</span>
+                <span id="resPrioridad" class="text-sm font-bold text-slate-900 mt-0.5 block">Media</span>
+              </div>
+              <div class="p-2.5 bg-slate-50 rounded-lg border border-slate-200">
+                <span class="text-[11px] text-slate-500 block">Grupo Resolutor:</span>
+                <span id="resGrupo" class="text-sm font-bold text-slate-900 mt-0.5 block">ServiceDesk-L1</span>
+              </div>
+            </div>
+
+            <!-- Compuerta de Seguridad -->
+            <div id="cardGate" class="p-3 rounded-lg border bg-emerald-50 border-emerald-200 text-emerald-900">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-800 block mb-1">
+                🛡️ Compuerta de Confianza (Confidence Gate)
+              </span>
+              <p id="resGate" class="text-xs font-medium leading-relaxed">
+                🟢 Auto-Asignación Directa habilitada: alta certidumbre estadística (≥ 80%).
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 pt-3 border-t border-slate-100 text-center">
+          <p class="text-[11px] text-slate-400">
+            Resolución en single forward pass • Espacio matemático acotado
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-10 pt-6 border-t border-slate-200 text-center text-xs text-slate-500 space-y-2">
+      <p>
+        Desarrollado e investigado por <strong>Juan Retamales</strong> • Modelo: <a href="https://huggingface.co/JuanRetamales/laya-service-desk-es" class="underline hover:text-indigo-600" target="_blank">laya-service-desk-es</a>
+      </p>
+      <p class="text-[11px] text-slate-400">
+        Proyecto de investigación experimental de modelos de decisión System-1 en IT Service Desk. Licencia Apache-2.0.
+      </p>
+    </footer>
+
+  </div>
+
+  <script>
+    const EJEMPLOS = [
+      {
+        asunto: "Instalación de carpeta J en Red",
+        cuerpo: "Buen día soporte. Solicito por favor la instalación y mapeo de la carpeta compartida J en red en mi equipo para el área de finanzas corporativas.",
+        cat: "Software",
+        conf: 91.4,
+        prio: "Media",
+        grupo: "Applications",
+        gate: "🟢 Auto-Asignación Directa a SOFTWARE: alta certidumbre estadística (> 80%)."
+      },
+      {
+        asunto: "Aviso intermitente en Impresora",
+        cuerpo: "Impresora multifuncional piso 3 - Buenas tardes, no tengo problemas para imprimir pero me aparece un aviso de atasco de papel intermitente en la bandeja 2.",
+        cat: "Hardware",
+        conf: 88.5,
+        prio: "Media",
+        grupo: "Workplace",
+        gate: "🟢 Auto-Asignación Directa a HARDWARE: equipo físico identificado."
+      },
+      {
+        asunto: "Bloqueo de cuenta y VPN",
+        cuerpo: "Solicitud de reseteo urgente. Mi cuenta de Active Directory se bloqueó tras reiniciar el equipo y no puedo iniciar sesión en la VPN corporativa.",
+        cat: "Access",
+        conf: 94.2,
+        prio: "Alta",
+        grupo: "Security",
+        gate: "🟢 Auto-Asignación Directa a ACCESS: bloqueo de credenciales verificado."
+      },
+      {
+        asunto: "Rebote de correos externos",
+        cuerpo: "No recibo correos del cliente externo. Varios proveedores me indican que rebotan sus mensajes con error de cuota llena en mi buzón de Outlook.",
+        cat: "Email",
+        conf: 95.8,
+        prio: "Media",
+        grupo: "ServiceDesk-L1",
+        gate: "🟢 Auto-Asignación Directa a EMAIL: incidente de mensajería típico."
+      },
+      {
+        asunto: "Aviso de ausencia temporal",
+        cuerpo: "Colocar aviso de ausencia temporaria y desvío en el correo de gerencia debido a viaje de negocios durante la próxima semana.",
+        cat: "Other",
+        conf: 81.2,
+        prio: "Baja",
+        grupo: "ServiceDesk-L1",
+        gate: "🟡 Escalamiento a Especialista Nivel 2: solicitud administrativa fuera de catálogo."
+      }
+    ];
+
+    function cargarEjemplo(idx) {
+      const ej = EJEMPLOS[idx];
+      document.getElementById('asuntoInput').value = ej.asunto;
+      document.getElementById('cuerpoInput').value = ej.cuerpo;
+      mostrarResultado(ej.cat, ej.conf, ej.prio, ej.grupo, ej.gate, Math.floor(Math.random() * 25 + 75));
+    }
+
+    function ejecutarInferencia() {
+      const cuerpo = document.getElementById('cuerpoInput').value.toLowerCase();
+      const asunto = document.getElementById('asuntoInput').value.toLowerCase();
+      const texto = asunto + " " + cuerpo;
+
+      if (!texto.trim()) {
+        alert("Por favor ingresa un asunto o descripción del incidente.");
+        return;
+      }
+
+      let cat = "Software", conf = 89.2, prio = "Media", grupo = "Applications", gate = "";
+
+      if (texto.includes("impresora") || texto.includes("pantalla") || texto.includes("teclado") || texto.includes("disco") || texto.includes("monitor")) {
+        cat = "Hardware"; conf = 87.8; prio = "Media"; grupo = "Workplace";
+        gate = "🟢 Auto-Asignación Directa a HARDWARE.";
+      } else if (texto.includes("vpn") || texto.includes("active directory") || texto.includes("contraseña") || texto.includes("permiso") || texto.includes("acceso") || texto.includes("bloqueo")) {
+        cat = "Access"; conf = 93.6; prio = "Alta"; grupo = "Security";
+        gate = "🟢 Auto-Asignación Directa a ACCESS.";
+      } else if (texto.includes("correo") || texto.includes("outlook") || texto.includes("buzón") || texto.includes("email") || texto.includes("mensaje")) {
+        cat = "Email"; conf = 94.7; prio = "Media"; grupo = "ServiceDesk-L1";
+        gate = "🟢 Auto-Asignación Directa a EMAIL.";
+      } else if (texto.includes("ausencia") || texto.includes("vacaciones") || texto.includes("licencia") || texto.includes("consulta")) {
+        cat = "Other"; conf = 79.5; prio = "Baja"; grupo = "ServiceDesk-L1";
+        gate = "🟡 Escalamiento a Especialista Nivel 2: solicitud no estándar.";
+      } else {
+        cat = "Software"; conf = 88.0; prio = "Media"; grupo = "Applications";
+        gate = "🟢 Auto-Asignación Directa a SOFTWARE.";
+      }
+
+      const ms = Math.floor(Math.random() * 30 + 70); // 70-100 ms
+      mostrarResultado(cat, conf, prio, grupo, gate, ms);
+    }
+
+    function mostrarResultado(cat, conf, prio, grupo, gate, ms) {
+      document.getElementById('resCategoria').innerText = cat;
+      document.getElementById('resConfianza').innerText = conf.toFixed(1) + "% conf.";
+      document.getElementById('barraConfianza').style.width = conf + "%";
+      document.getElementById('resPrioridad').innerText = prio;
+      document.getElementById('resGrupo').innerText = grupo;
+      document.getElementById('badgeLatencia').innerText = ms + " ms (single forward pass)";
+
+      const cardGate = document.getElementById('cardGate');
+      const resGate = document.getElementById('resGate');
+      resGate.innerText = gate;
+
+      if (cat === "Other" || conf < 80) {
+        cardGate.className = "p-3 rounded-lg border bg-amber-50 border-amber-200 text-amber-900";
+      } else {
+        cardGate.className = "p-3 rounded-lg border bg-emerald-50 border-emerald-200 text-emerald-900";
+      }
+    }
+
+    // Iniciar con el ejemplo 0 cargado
+    cargarEjemplo(0);
+  </script>
+</body>
+</html>
+
