@@ -14,6 +14,7 @@
 
 * 📦 **Modelo en Hugging Face Hub:** [JuanRetamales/laya-service-desk-es](https://huggingface.co/JuanRetamales/laya-service-desk-es)
 * 🚀 **Demo Interactiva en Vivo (Space):** [laya-service-desk-demo](https://huggingface.co/spaces/JuanRetamales/laya-service-desk-demo) *(Prueba 5 incidentes reales del dataset con un solo clic)*
+* 💻 **Repositorio Oficial en GitHub:** [github.com/juanretamales/Laya-Service-Desk-Esp](https://github.com/juanretamales/Laya-Service-Desk-Esp)
 * 📝 **Artículo de Divulgación para Docusaurus:** [`paper/ARTICULO_WEB_LAYA_FINETUNING_ESPANOL.md`](paper/ARTICULO_WEB_LAYA_FINETUNING_ESPANOL.md)
 * 🔬 **Manuscrito Científico Formal (LaTeX/IEEE):** [`paper/main.tex`](paper/main.tex) y [`paper/references.bib`](paper/references.bib)
 

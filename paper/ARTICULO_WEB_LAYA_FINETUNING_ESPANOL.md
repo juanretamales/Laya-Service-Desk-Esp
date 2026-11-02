@@ -163,7 +163,7 @@ else:
 :::tip Recursos Disponibles en Hugging Face
 * 📦 **Modelo publicado (Pesos y Model Card):** [huggingface.co/JuanRetamales/laya-service-desk-es](https://huggingface.co/JuanRetamales/laya-service-desk-es)
 * 🚀 **Demo Interactiva en Vivo (Space):** [huggingface.co/spaces/JuanRetamales/laya-service-desk-demo](https://huggingface.co/spaces/JuanRetamales/laya-service-desk-demo) *(Prueba los 5 ejemplos del test set con un clic).*
-* 💻 **Código y scripts del proyecto:** [GitHub: juanretamales/laya-service-desk](https://github.com/juanretamales/laya-service-desk)
+* 💻 **Código y scripts del proyecto:** [GitHub: juanretamales/Laya-Service-Desk-Esp](https://github.com/juanretamales/Laya-Service-Desk-Esp)
 :::
 
 ---
